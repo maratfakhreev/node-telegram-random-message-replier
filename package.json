@@ -1,0 +1,28 @@
+{
+  "name": "node-telegram-random-message-replier",
+  "description": "Node module which allows the bot to reply to a random message in the chat",
+  "version": "1.0.0",
+  "main": "./index.js",
+  "author": {
+    "name": "Marat Fakhreev",
+    "email": "marat.fakhreev@gmail.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://gitlab.com/maratfakhreev/node-telegram-random-message-replier.git"
+  },
+  "scripts": {
+    "start": "node index.js --max-old-space-size=128",
+    "dev": "nodemon index.js --max-old-space-size=128",
+    "test": "eslint index.js"
+  },
+  "dependencies": {
+    "lodash": "~4.17.4",
+    "node-localstorage": "~1.3.0"
+  },
+  "devDependencies": {
+    "eslint": "~3.19.0",
+    "eslint-config-fs": "~0.2.2"
+  }
+}
