@@ -60,7 +60,7 @@ bot.on('message', msg => {
 ### Options:
 
 ```javascript
-new TelegramCacheChatMessages({
+new TelegramRandomMessageReplier({
   bot: <your bot instance> // previously created bot via node-telegram-bot-api
   defaultChance: <number> // default chance to reply to a message | default: 0
   showChanceMessage: <string> // set message for show chance command
