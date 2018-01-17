@@ -30,31 +30,30 @@ module.exports = class TelegramRandomMessageReplier {
     this.saveChance(chatId, chance);
   }
 
-  try(msg, callback) {
+  process(msg, successCb, errorCb = () => {}) {
     const chatId = msg.chat.id;
     const currentChatIndex = this.getChatIndex(chatId);
 
-    return new Promise((resolve, reject) => {
-      if (currentChatIndex > -1) {
-        const randomNumber = random(1, 100);
-        const chanceNumber = this.getChat(currentChatIndex).chance;
+    if (!successCb || typeof successCb !== 'function') {
+      throw new Error('Specify success callback that handles replied message as second parameter of process function');
+    }
 
-        if (randomNumber <= chanceNumber) return resolve(msg);
-
-        return reject(msg);
+    if (currentChatIndex > -1) {
+      if (random(1, 100) <= this.getChat(currentChatIndex).chance) {
+        successCb(msg);
+      } else {
+        errorCb(msg);
       }
-
-      return reject(msg);
-    });
+    } else {
+      errorCb(msg);
+    }
   }
 
   handleMessage(msg, currentChance = null, nextChance = null) {
-    const cc = /CURRENT_CHANCE/g;
-    const nc = /NEXT_CHANCE/g;
     let newMsg = msg;
 
-    if (currentChance !== null) newMsg = newMsg.replace(cc, currentChance);
-    if (nextChance !== null) newMsg = newMsg.replace(nc, nextChance);
+    if (currentChance !== null) newMsg = newMsg.replace(/CURRENT_CHANCE/g, currentChance);
+    if (nextChance !== null) newMsg = newMsg.replace(/NEXT_CHANCE/g, nextChance);
 
     return newMsg;
   }

@@ -45,15 +45,18 @@ bot.onText(/^\/chance(@.* )?(.+)?/, (msg, match) => {
 
 // handle each message to be ready for replying
 bot.on('message', msg => {
-  const chatId = msg.chat.id;
-  // try() method calculates chance for message of being replied
+  // process() method calculates chance for message of being replied and calls one of the callbacks
   // the chance is set previously via "/setchance <value>" command
-  replier.try(msg).then(msg => {
-    // do something with lucky message
-    bot.sendMessage(chatId, msg);
-  }).catch(msg => {
-    // do something with unlucky message if you want
-  });
+  replier.process(
+    msg,
+    repliedMsg => {
+      // success callback. Do something with lucky message
+      bot.sendMessage(repliedMsg.chat.id, repliedMsg);
+    },
+    repliedMsg => {
+      // error callback [optional]. Do something with unlucky message if you want
+    }
+  );
 });
 ```
 
