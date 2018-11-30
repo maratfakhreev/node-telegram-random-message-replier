@@ -1,13 +1,21 @@
-const { JSONStorage } = require('node-localstorage');
 const { random, remove, unionWith } = require('lodash');
+const firebase = require('firebase-admin');
+const serviceAccount = require('./serviceKey.json');
 
-module.exports = class TelegramRandomMessageReplier {
+class TelegramRandomMessageReplier {
   constructor(options) {
-    this.storage = new JSONStorage('/tmp/storage');
-    this.bot = options.bot;
-    this.defaultChance = options.defaultChance || 0;
-    this.showChanceMessage = options.showChanceMessage || 'Current chance is CURRENT_CHANCE%';
-    this.setChanceMessage = options.setChanceMessage || 'Current chance changed from CURRENT_CHANCE% to NEXT_CHANCE%';
+    firebase.initializeApp({
+      credential: firebase.credential.cert(serviceAccount),
+      databaseURL: 'https://betweenlegsbot.firebaseio.com'
+    });
+
+    // this.bot = options.bot;
+    // this.defaultChance = options.defaultChance || 0;
+    // this.showChanceMessage = options.showChanceMessage || 'Current chance is CURRENT_CHANCE%';
+    // this.setChanceMessage = options.setChanceMessage || 'Current chance changed from CURRENT_CHANCE% to NEXT_CHANCE%';
+    this.storage = firebase.firestore().collection('chats');
+
+    this.pushChat({ chatId: 111 });
   }
 
   showChance(msg) {
@@ -81,36 +89,46 @@ module.exports = class TelegramRandomMessageReplier {
       this.defaultChance;
   }
 
-  getChats() {
-    return this.storage.getItem('chats') || [];
+  async getChats() {
+    let chats = [];
+    const snapshot = await this.storage.get();
+
+    snapshot.forEach(doc => {
+      chats = [...chats, doc.data()];
+    });
+
+    return chats || [];
   }
 
-  setChats(chats) {
-    this.storage.setItem('chats', chats);
-  }
+  // setChats(chat) {
+  //   this.storage.add(chat);
+  // }
 
   getChat(index) {
     return this.getChats()[index];
   }
 
-  getChatIndex(chatId) {
-    const chats = this.getChats();
+  async getChatIndex(chatId) {
+    const chats = await this.getChats();
     const chat = chats.filter(chat => chat.chatId === chatId)[0];
 
     return chats.indexOf(chat);
   }
 
-  removeChat(chatId) {
-    const chats = this.getChats();
+  // async removeChat(chatId) {
+  //   const chats = await this.getChats();
 
-    remove(chats, item => item.chatId === chatId);
-    this.setChats(chats);
-  }
+  //   remove(chats, item => item.chatId === chatId);
+  //   this.setChats(chats);
+  // }
 
-  pushChat(data) {
-    const chats = this.getChats();
-    const unionChats = unionWith([data], chats, (a, b) => a.chatId === b.chatId);
+  // async pushChat(chat) {
+  //   this.storage.add(chat);
+  //   // const chats = await this.getChats();
+  //   // const unionChats = unionWith([data], chats, (a, b) => a.chatId === b.chatId);
 
-    this.setChats(unionChats);
-  }
-};
+  //   // this.setChats(unionChats);
+  // }
+}
+
+new TelegramRandomMessageReplier();
