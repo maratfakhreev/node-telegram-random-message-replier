@@ -3,7 +3,7 @@ const { random, remove, unionWith } = require('lodash');
 
 module.exports = class TelegramRandomMessageReplier {
   constructor(options) {
-    this.storage = new JSONStorage('/tmp/storage');
+    this.storage = new JSONStorage(options.dbPath || '/tmp/storage');
     this.bot = options.bot;
     this.defaultChance = options.defaultChance || 0;
     this.showChanceMessage = options.showChanceMessage || 'Current chance is CURRENT_CHANCE%';

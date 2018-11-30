@@ -24,6 +24,7 @@ const TelegramRandomMessageReplier = require('node-telegram-random-message-repli
 const bot = new TelegramBot(BOT_TOKEN);
 const replier = new TelegramRandomMessageReplier({
   bot,
+  dbPath: path.resolve(process.cwd(), 'db'),
   defaultChance: 0,
   showChanceMessage: 'Current chance is CURRENT_CHANCE%',
   setChanceMessage: 'Current chance changed from CURRENT_CHANCE% to NEXT_CHANCE%'
