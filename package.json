@@ -1,7 +1,7 @@
 {
   "name": "node-telegram-random-message-replier",
   "description": "Node module which allows the bot to reply to a random message in the chat",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "main": "./index.js",
   "author": {
     "name": "Marat Fakhreev",
